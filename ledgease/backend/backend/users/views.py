@@ -22,7 +22,7 @@ class myTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = 'users.myTokenObtainPairSerializer'
+    serializer_class = myTokenObtainPairSerializer
 
 # Handles user registration
 # This serializer will create a new user with the provided data tracks username, email, password and created tag
@@ -37,7 +37,16 @@ class registerationSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])  # Hash the password
         user.save()
         return user
-
+    
+# This view will handle user registration requests on the frontend
+class registrationView(APIView):
+    def post(self, request):
+        serializer = registerationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"ALERT": "User registered successfully"}, status=201)
+        return Response(serializer.errors, status=400)
+    
 # Handles user profile data on a frontend request
 # This view will return the user's profile information
 class userProfileView(APIView):
@@ -49,14 +58,13 @@ class userProfileView(APIView):
         serializer = UserSerializer(user, email, many=False)
         return Response(serializer.data)
     
-# Placeholder for user portfolio view
+# Placeholder for user portfolio view frontend request
 # This view will handle the user's portfolio data
 class userPortfolioView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user = request.user.username
-        # Assuming you have a Portfolio model related to the user
-        portfolio = user.portfolio_set.all()  # Adjust according to your model
+        user = request.user
+        portfolio = user.portfolio_set.all()  
         serializer = PortfolioSerializer(portfolio, many=True)
         return Response(serializer.data)
