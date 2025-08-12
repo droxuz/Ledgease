@@ -23,7 +23,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = myTokenObtainPairSerializer
 
     
-# This view will handle user registration requests on the frontend
+# This view will handle user registration requests
 class registrationView(APIView):
     def post(self, request):
         serializer = registrationSerializer(data=request.data)
@@ -32,7 +32,7 @@ class registrationView(APIView):
             return Response({"ALERT": "User registered successfully"}, status=201)
         return Response(serializer.errors, status=400)
     
-# Handles user profile data on a frontend request
+# Handles user profile data
 # This view will return the user's profile information
 class userProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -41,7 +41,7 @@ class userProfileView(APIView):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
     
-# Placeholder for user portfolio view frontend request
+# Placeholder for user portfolio view 
 # This view will handle the user's portfolio data
 class userPortfolioView(APIView):
     permission_classes = [IsAuthenticated]
@@ -50,3 +50,17 @@ class userPortfolioView(APIView):
         qs = Portfolio.objects.filter(user=request.user)
         serializer = PortfolioSerializer(qs, many=True)
         return Response(serializer.data)
+    
+class userSettingsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+
+    def put(self, request):
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"ALERT": "User settings updated successfully"}, status=200)
+        return Response(serializer.errors, status=400)
