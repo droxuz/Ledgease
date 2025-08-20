@@ -28,4 +28,4 @@ __pycache__/
 *.py[cod]
 
 # Django settings
-ledgease/backend/backend/backend/settings.py
+backend/backend/backend/settings.py
