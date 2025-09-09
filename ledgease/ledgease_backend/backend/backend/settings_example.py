@@ -15,6 +15,7 @@ from datetime import timedelta as timeDelta
 from dotenv import load_dotenv
 from django.core.management.utils import get_random_secret_key
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -86,12 +87,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',  
-        'HOST': '',  
-        'PORT': '',  
+        "default": dj_database_url.config(
+            default=os.getenv("DATABASE_URL"),
+            conn_max_age= 600,
+            ssl_require= True,
+        )
     }
 }
 
