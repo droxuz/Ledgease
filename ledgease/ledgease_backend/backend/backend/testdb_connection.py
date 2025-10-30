@@ -1,7 +1,7 @@
 import psycopg2
 from dotenv import load_dotenv
-import os, socket
-# Copied from SUPABASE
+import os
+
 # Load environment variables from .env
 load_dotenv()
 
@@ -11,14 +11,6 @@ PASSWORD = os.getenv("PASSWORD")
 HOST = os.getenv("HOST")
 PORT = os.getenv("PORT")
 DBNAME = os.getenv("DATABASE")
-
-print("HOST repr ->", repr(HOST))
-try:
-    ip = socket.gethostbyname(HOST.strip())
-    print("Resolved IP ->", ip)
-except Exception as e:
-    print("DNS resolve failed ->", e)
-    raise
 
 # Connect to the database
 try:
@@ -43,7 +35,6 @@ try:
     cursor.close()
     connection.close()
     print("Connection closed.")
-
 
 except Exception as e:
     print(f"Failed to connect: {e}")
