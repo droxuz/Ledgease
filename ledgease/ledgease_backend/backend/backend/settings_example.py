@@ -14,7 +14,7 @@ from pathlib import Path
 from datetime import timedelta as timeDelta
 from dotenv import load_dotenv
 from django.core.management.utils import get_random_secret_key
-import os, dj_database_url
+import os, dj_database_url, sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -142,5 +142,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timeDelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timeDelta(days=1),
-    
 }
+
+LOGIN_URL = 'login/'
+
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
+    }
