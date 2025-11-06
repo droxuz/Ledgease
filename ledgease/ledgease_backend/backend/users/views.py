@@ -1,11 +1,12 @@
 from django.shortcuts import render
+from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
-from .serializers import UserSerializer, registrationSerializer, PortfolioSerializer
+from .serializers import UserSerializer, RegistrationSerializer, PortfolioSerializer, UserUpdateSerializer
 from .models import Portfolio
 # Create your views here.
 
@@ -24,9 +25,9 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
     
 # This view will handle user registration requests
-class registrationView(APIView):
+class RegistrationView(APIView):
     def post(self, request):
-        serializer = registrationSerializer(data=request.data)
+        serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({"ALERT": "User registered successfully"}, status=201)
@@ -34,7 +35,7 @@ class registrationView(APIView):
     
 # Handles user profile data
 # This view will return the user's profile information
-class userProfileView(APIView):
+class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -43,7 +44,7 @@ class userProfileView(APIView):
     
 # Placeholder for user portfolio view 
 # This view will handle the user's portfolio data
-class userPortfolioView(APIView):
+class UserPortfolioView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -51,16 +52,21 @@ class userPortfolioView(APIView):
         serializer = PortfolioSerializer(qs, many=True)
         return Response(serializer.data)
     
-class userSettingsView(APIView):
+class UserUpdateView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         serializer = UserSerializer(request.user)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request):
-        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        serializer = UserUpdateSerializer(
+            instance=request.user,
+            data=request.data,
+            context={'request': request},
+            partial=True,  # allow partial updates
+        )
         if serializer.is_valid():
-            serializer.save()
-            return Response({"ALERT": "User settings updated successfully"}, status=200)
-        return Response(serializer.errors, status=400)
+            serializer.save()  # calls update()
+            return Response({"ALERT": "User updated successfully"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

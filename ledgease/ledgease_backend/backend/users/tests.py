@@ -20,7 +20,7 @@ class databaseConnectionTests(APITestCase):
             db_connected = False # If any exception occurs, connection failed
         self.assertTrue(db_connected, "Database connection failed.")
 
-class UsersAccountTests(APITestCase):
+class UsersAccountTests(APITestCase): # Test for user registration and login
     def setUp(self):
         # Test user data
         self.username = "testuser"
@@ -59,5 +59,21 @@ class UsersAccountTests(APITestCase):
         self.assertIn("access", response.data) # Checks for access JWT token
         self.assertIn("refresh", response.data) # Checks for refresh JWT token
         print(response.status_code)
+
+    def test_user_update(self):
+        # Test user update endpoint
+        url = reverse('user-update')  
+        self.client.login(username=self.username, password=self.password) # Log in the test user
+        data = { # New data for updating user
+            "username": "updateduser",
+            "email": "updateduser@example.com",
+            "password": self.password,
+            "new_password": "UpdatedStrongP@ssw0rd!"
+        }
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("ALERT", response.data)
+        self.assertEqual(response.data["ALERT"], "User updated successfully")
+        print(response.status_code, response.data)
         
         
