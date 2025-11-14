@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',  # Custom app for user management
+    'finance',  # Custom app for finance management
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -143,9 +145,7 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timeDelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timeDelta(days=1),
 }
-
 LOGIN_URL = 'login/'
-
 if 'test' in sys.argv:
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
