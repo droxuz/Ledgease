@@ -15,3 +15,23 @@ def get_finance_data(request): #User must be logged in
     return JsonResponse({
         'data': serializer.data
     })
+
+def create_category(request):
+    if request.method == 'POST':
+        user = request.user
+        data = request.POST
+        serializer = CategorySerializer(data=data)
+        if serializer.is_valid():
+            serializer.save(user=user)
+            return JsonResponse({'message': 'Category created successfully.', 'category': serializer.data}, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
+def create_transaction(request):
+    if request.method == 'POST':
+        user = request.user
+        data = request.POST
+        serializer = TransactionSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save(user=user)
+            return JsonResponse({'message': 'Transaction created successfully.', 'transaction': serializer.data}, status=201)
+        return JsonResponse(serializer.errors, status=400)

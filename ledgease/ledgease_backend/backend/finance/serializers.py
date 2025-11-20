@@ -32,6 +32,13 @@ class CategorySerializer(serializers.ModelSerializer):
             'name'
         ]
 
+    def validate_category(self, data): #Validate category data
+        if data['type'] not in ['EXPENSE', 'SPENDING']:
+            raise serializers.ValidationError("Invalid category type.")
+        if not data['name']:
+            raise serializers.ValidationError("Category name cannot be empty.")
+        return data
+
 #Serializer for Transaction model
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -46,3 +53,12 @@ class TransactionSerializer(serializers.ModelSerializer):
         read_only_fields = [ 
             'date'
         ]
+    
+    def validate_transaction(self,data): #Validates transactions
+        if data['type'] not in ['INCOME', 'EXPENSE','SPENDING']:
+            raise serializers.ValidationError("Invalid transaction type.")
+        if data['amount'] <= 0:
+            raise serializers.ValidationError("Transaction amount must be a non-zero positive value.")
+        if data['category'] is None:
+            raise serializers.ValidationError("Transaction must have a category.")
+        return data
