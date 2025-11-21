@@ -2,5 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('user-finance-data/', views.get_finance_data, name='get_finance_data'), #Endpoint to get user finance data
+    path('finance-categories/', views.categoryListCreateView.as_view(), name='category-list-create'),
+    path('finance-categories/<int:pk>/', views.categoryDetailView.as_view(), name='category-detail'),
+    path('finance-transactions/', views.transactionListCreateView.as_view(), name='transaction-list-create'),
+    path('finance-transactions/<int:pk>/', views.transactionDetailView.as_view(), name='transaction-detail'),
     ]

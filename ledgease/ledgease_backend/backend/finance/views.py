@@ -2,36 +2,53 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from .models import UserFinanceData, Category, Transaction
 from .serializers import UserFinanceDataSerializer, CategorySerializer, TransactionSerializer
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
-def get_finance_data(request): #User must be logged in
-    user = request.user #User from request
-    try:
-        finance_data = UserFinanceData.objects.get(user=user)#Get user finance data
-    except UserFinanceData.DoesNotExist:
-        return JsonResponse({"error": "Finance data not found."}, status=404)
+# Allows APIView of GET and POST for category model
+class categoryListCreateView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CategorySerializer
 
-    serializer = UserFinanceDataSerializer(finance_data)
-    return JsonResponse({
-        'data': serializer.data
-    })
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user)
+    
+    def create_category(self, serializer):
+        serializer.save(user=self.request.user)
 
-def create_category(request):
-    if request.method == 'POST':
-        user = request.user
-        data = request.POST
-        serializer = CategorySerializer(data=data)
-        if serializer.is_valid():
-            serializer.save(user=user)
-            return JsonResponse({'message': 'Category created successfully.', 'category': serializer.data}, status=201)
-        return JsonResponse(serializer.errors, status=400)
+# Allows APIView of GET, PUT, DELETE for category model
+class categoryDetailView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CategorySerializer
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user)
+    
+# Allows APIView of GET and POST for transaction model
+class transactionListCreateView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TransactionSerializer
 
-def create_transaction(request):
-    if request.method == 'POST':
-        user = request.user
-        data = request.POST
-        serializer = TransactionSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save(user=user)
-            return JsonResponse({'message': 'Transaction created successfully.', 'transaction': serializer.data}, status=201)
-        return JsonResponse(serializer.errors, status=400)
+    def get_queryset(self):
+        return Transaction.objects.filter(user=self.request.user).order_by('-date')
+    
+    def create_transaction(self, serializer):
+        serializer.save(user=self.request.user)
+
+# Allows APIView of GET, PUT, DELETE for transaction model
+class transactionDetailView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TransactionSerializer
+
+    def get_queryset(self):
+        return Transaction.objects.filter(user=self.request.user)
+    
+# Allows APIView of GET for user finance data model
+class userFinanceDataRetrieveView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserFinanceDataSerializer
+        
+    def get_object(self):
+        finance_data, created = UserFinanceData.objects.get_or_create(user=self.request.user)
+        finance_data.CalculateTotals() #Recalculate totals on each fetch
+        return finance_data

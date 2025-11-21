@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'users',  # Custom app for user management
     'finance',  # Custom app for finance management
     'rest_framework',
+    'finance.apps.FinanceConfig',
 ]
 
 MIDDLEWARE = [
