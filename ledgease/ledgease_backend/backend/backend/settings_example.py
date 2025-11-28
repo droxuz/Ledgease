@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',  # Custom app for user management
-    'finance',  # Custom app for finance management
     'rest_framework',
     'finance.apps.FinanceConfig',
 ]

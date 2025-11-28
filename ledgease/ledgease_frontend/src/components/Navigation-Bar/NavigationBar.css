@@ -1,0 +1,23 @@
+.nav-logo{
+    width: auto;
+}
+
+
+.nav-links{
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 2rem;
+}
+
+.navigation-bar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    position: sticky;
+    top:0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+

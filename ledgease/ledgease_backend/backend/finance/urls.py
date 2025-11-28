@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('user-finance-data/', views.userFinanceDataRetrieveView.as_view(), name='user-finance-data'),
     path('finance-categories/', views.categoryListCreateView.as_view(), name='category-list-create'),
     path('finance-categories/<int:pk>/', views.categoryDetailView.as_view(), name='category-detail'),
     path('finance-transactions/', views.transactionListCreateView.as_view(), name='transaction-list-create'),
