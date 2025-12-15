@@ -14,5 +14,6 @@ export default function LandingPage(){
             <button className="get-started-button">Get Started</button>
         </div>
         </div>
+        
     );
 }
