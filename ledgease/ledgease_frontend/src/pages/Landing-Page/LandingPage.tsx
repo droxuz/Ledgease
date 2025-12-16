@@ -1,5 +1,5 @@
 import './landingpage.css';
-import NavigationBar from '../../components/Navigation-Bar/NavigationBar';
+import NavigationBar from '../../components/Landing-Navigation-Bar/LandingNavigationBar.tsx';
 
 
 

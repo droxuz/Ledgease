@@ -1,0 +1,78 @@
+.nav-logo{
+}
+
+.nav-links{
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 2vw;
+}
+
+.nav-links a{
+    color: white;
+    text-decoration: none;
+    padding: 0.3rem 0.6rem;
+}
+
+.nav-links a:hover{
+    background-color: rgba(255, 84, 255, 0.10);
+    padding: 0.3rem 0.6rem;
+}
+
+.logo{
+    height: 2rem;
+    width: 5rem;
+}
+
+.nav-bar{
+    font-size: 1.2rem;
+    display: flex;
+    color: white;
+    background-color: #242424;
+    align-items: center;
+    position: sticky;
+    padding:0 14vw;
+    border-bottom: 1px solid rgba(255, 84, 255, 1);
+    
+}
+
+.nav-bar-container{
+    width: 100%;
+    position: sticky;
+}
+
+.nav-cta-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
+    gap: 1rem;
+
+}
+
+/* Login Button */
+.nav-cta{ 
+    text-decoration: none;
+    color: white;
+    border: 1px solid white;
+    border-radius: 25px;
+    padding: 0.5rem 1rem;
+}
+.nav-cta:hover{
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Signup Button */
+.nav-cta-alt{
+    text-decoration: none;
+    color: black;
+    border: 1px solid white;
+    border-radius: 25px;
+    background-color: white;
+    padding: 0.5rem 1rem;
+}
+.nav-cta-alt:hover{
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
