@@ -30,9 +30,9 @@ export async function apiFetch<T>(
 
     if (accessToken) {
         headers.set('Authorization', `Bearer ${accessToken}`); // Set auth header if token exists
-    }
+    } //Allows request.user to be identified by backend and thus isAuthenticated
 
-    const response = await fetch(path, {...options, headers}); // Make fetch call{
+    const response = await fetch(path, {...options, headers}); 
     const contentType = response.headers.get('Content-Type');
     const isJson = contentType?.includes('application/json');
     const data = isJson ? await response.json() : await response.text();
