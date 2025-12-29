@@ -1,6 +1,10 @@
 import './LoginPage.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage(){
+    const nav = useNavigate();
+    
+
     return (
         <div className="login-page">
             <div className="login-container">
