@@ -41,8 +41,7 @@ export async function apiFetch<T>(
     console.log('Status Code:', response.status);
     
     if (!response.ok) {
-        const message = typeof data === 'string' ? data : (data?.ALERT ?? JSON.stringify(data));
-        throw new Error(message || 'API request failed');
+        throw data;
     }
     return data as T;
 }

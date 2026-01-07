@@ -11,18 +11,36 @@ type LoginResponse = {
     refreshToken: string;
 };
 
+type SignupPageErrors = {
+    nonFieldErrors?: string;
+};
+
 export default function SignupPage() {
     const nav = useNavigate();
     const [username, setUsername] = React.useState('');
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
-    const [error, setError] = React.useState('');
+    const [error, setError] = React.useState<string[]>([]);
     const [loading, setLoading] = React.useState(false);
+    
+    function extractErrorMessages(err: any): string[] {
+    if (!err || typeof err !== "object") return ["An unexpected error occurred."];
 
+    // DRF uses non_field_errors (snake_case)
+    if (Array.isArray(err.non_field_errors)) return err.non_field_errors;
+
+    // flatten field errors like { email: ["..."] }
+    const out: string[] = [];
+    for (const v of Object.values(err)) {
+      if (Array.isArray(v)) out.push(...v);
+    }
+    return out.length ? out : ["An unexpected error occurred."];
+  }
+    
     async function handleSignup(event: React.FormEvent) {
         event.preventDefault();
         setLoading(true);
-        setError('');
+        setError([]);
         // Handle signup logic here (e.g., API call)
         try {
             //Register
@@ -37,8 +55,8 @@ export default function SignupPage() {
             setToken(tokens.refreshToken, tokens.accessToken);
             console.log('Signup successful');
             nav('/dashboard');
-        } catch (event) {
-            setError(event instanceof Error ? event.message : 'Signup failed');
+        } catch (err) {
+            setError(extractErrorMessages(err));
         } finally {
             setLoading(false);
         }
@@ -57,9 +75,9 @@ export default function SignupPage() {
 
                     <label htmlFor="password">Password:</label>
                     <input type="password" id="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                    
-                    <button type="submit" className="signup-button" disabled={loading}>{loading ? "Creating..." : "Create Account"}</button>      
 
+                    <button type="submit" className="signup-button" disabled={loading}>{loading ? "Creating..." : "Create Account"}</button>      
+                    {error.map((msg, i) => (<p key={i} className="form-error">{msg}</p>))}
                 </form>
             </div>
         </div>

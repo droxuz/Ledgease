@@ -30,6 +30,19 @@ class RegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ("username", "email", "password")
         
+    def validate(self, attrs):
+        user = User(
+            username=attrs.get('username'),
+            email=attrs.get('email')
+        )
+        password = attrs.get('password')
+
+        try:
+            validate_password(password, user)
+        except serializers.ValidationError as err:
+            raise serializers.ValidationError({"password": err.messages})
+        return attrs
+    
     def create(self, validated_data):
         user = User.objects.create(
             username=validated_data['username'],
