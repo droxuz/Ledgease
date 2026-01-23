@@ -29,9 +29,10 @@ export default function LoginPage(){
             });
             setToken(tokens.refreshToken, tokens.accessToken);
             console.log('Login successful');
-            nav('/dashboard');
+            nav("/dashboard");
         } catch (event) {
-            setError(event instanceof Error ? event.message : 'Login failed');
+            setError(event instanceof Error ? event.message : 'Username or password incorrect');
+            
         } finally {
             setLoading(false);
         }
@@ -45,11 +46,14 @@ export default function LoginPage(){
 
                     <label htmlFor="username">Username:</label>
                     <input type="username" id="username" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                    
 
                     <label htmlFor="password">Password:</label>
                     <input type="password" id="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                     
-                    <button type="submit" className="login-button" disabled={loading}>{loading ? "Logging In": "Login"}</button>      
+                    {error && <div className="field-error">{error}</div>}
+                    <button type="submit" className="login-button" disabled={loading}>{loading ? "Logging In": "Login"}</button> 
+                    
                 </form>
             </div>
         </div>
