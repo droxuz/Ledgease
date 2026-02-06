@@ -1,0 +1,29 @@
+
+services:
+  backend:
+    build: 
+      context: ./ledgease_backend/backend
+      dockerfile: Dockerfile
+    container_name: ledgease-backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./ledgease_backend/backend:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./ledgease_backend/backend/.env
+
+  frontend:
+    build: 
+      context: ./ledgease_frontend
+      dockerfile: Dockerfile
+    container_name: ledgease-frontend
+    command: npm run dev -- --host 0.0.0.0
+    volumes:
+      - ./ledgease_frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    

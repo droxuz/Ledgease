@@ -34,7 +34,7 @@ if not SECRET_KEY:
         key_file.write_text(SECRET_KEY)
 DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['backend', 'localhost', 'backend:8000']
 
 
 # Application definition
