@@ -50,15 +50,14 @@ class TransactionSerializer(serializers.ModelSerializer):
             'description', 
             'category'
         ]
-        read_only_fields = [ 
-            'date'
-        ]
+        
     
     def validate_transaction(self,data): #Validates transactions
-        if data['type'] not in ['INCOME', 'EXPENSE','SPENDING']:
-            raise serializers.ValidationError("Invalid transaction type.")
-        if data['amount'] <= 0:
-            raise serializers.ValidationError("Transaction amount must be a non-zero positive value.")
-        if data['category'] is None:
-            raise serializers.ValidationError("Transaction must have a category.")
+        user = self.context['request'].user
+        category: Category = data.get('category')
+        transaction_type = data.get('type')
+        if category and category.user != user:
+            raise serializers.ValidationError("Category does not belong to the user.")
+        if category and category.type != transaction_type:
+            raise serializers.ValidationError("Category type does not match transaction type.")
         return data

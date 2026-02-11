@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 #Model to store user's overall financial data
 class UserFinanceData(models.Model):
@@ -31,11 +33,17 @@ class UserFinanceData(models.Model):
 class Category(models.Model):
     class CategoryType(models.TextChoices): #Types of categories INCOME will not have categories rather be NULL
         EXPENSE = 'EXPENSE', 'Expense'
+        INCOME = 'INCOME', 'Income'
         SPENDING = 'SPENDING', 'Spending'
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="categories") #Link category to user
     type = models.CharField(max_length=10, choices=CategoryType.choices) #Type of category
-    name = models.CharField(max_length=50) # Max Lngth of category name
+    name = models.CharField(max_length=50) # Max Length of category name
+        
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "type", "name"], name="uniq_category_user_type_name")
+        ]
 
     def __str__(self):
         return f"Category {self.name} for User {self.user_id}" #Return string representation of category with user ID
@@ -47,13 +55,22 @@ class Transaction(models.Model):
         EXPENSE = 'EXPENSE', 'Expense'
         SPENDING = 'SPENDING', 'Spending'
 
-
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="transactions") #Link transaction to user
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, related_name="transactions", null='True',blank='True') #Link transaction to category for INCOME will NULL
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="transactions", null=True ,blank=True) #Link transaction to category for INCOME will NULL
     type = models.CharField(max_length=10, choices=TransactionType.choices) #Type of transaction
     amount = models.DecimalField(max_digits=12, decimal_places=2) #Amount of transaction
-    date = models.DateTimeField(auto_now_add=True) #Date time of transaction
+    date = models.DateTimeField(default=timezone.now) #Date time of transaction
     description = models.CharField(max_length=255, blank=True) #Description of transaction
+
+    def clean(self):
+        if self.category is None:
+            raise ValidationError("Category must be set for all transactions.")
+        
+        if self.category.user_id != self.user_id:
+            raise ValidationError("Category must belong to the same user as the transaction.")
+        
+        if self.category.type != self.type:
+            raise ValidationError("Category type must match transaction type.") 
 
     def __str__(self):
         x = self.category.type if self.category else "No Category"
